@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  
+  httpd1:
+    build:
+      context: ./httpd1
+      dockerfile: Dockerfile
+    image: "httpd1-image:01aug25"
+    container_name: "httpd1cont"
+    ports:
+      - "8080:80"
+    networks:
+      - nginxlb-nw
+    restart: always
+
+  httpd2:
+    build:
+      context: ./httpd2
+      dockerfile: Dockerfile
+    image: "httpd2-image:01aug25"
+    container_name: "httpd2cont"
+    ports:
+      - "8000:80"
+    networks:
+      - nginxlb-nw
+    restart: always
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    image: nginx
+    container_name: "nginx-cont"
+    ports:
+      - "80:80"
+    networks:
+      - nginxlb-nw
+    restart: always
+    depends_on:
+      - httpd1
+      - httpd2
+
+networks:
+  nginxlb-nw:
+    driver: bridge
